@@ -21,19 +21,39 @@ path.closeSubpath()
 mask.path = path
 base.mask = mask
 
-//view.layer.addSublayer(base)
-
 let replicator = CAReplicatorLayer()
-
 replicator.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
 replicator.position = view.center
 replicator.instanceCount = 4
 replicator.instanceTransform = CATransform3DMakeRotation(CGFloat(M_PI/2), 0, 0, 1)
-replicator.instanceRedOffset = 0.87
 replicator.addSublayer(base)
-view.layer.addSublayer(replicator)
 
-print(view.center)
+let second = CAReplicatorLayer()
+second.frame = CGRect(x: 0, y: 0, width: 600, height: 600)
+second.position = view.center
+second.instanceCount = 2
+second.instanceTransform = CATransform3DMakeScale(-1, 1, 1)
+second.addSublayer(replicator)
+
+view.layer.addSublayer(second)
+
+let line = CAShapeLayer()
+let linePath = CGMutablePath()
+
+linePath.addEllipse(in: CGRect(x: 5, y: 250, width: 300, height: 120))
+linePath.closeSubpath()
+line.path = linePath
+
+let rotate = CABasicAnimation(keyPath: "transform.scale.x")
+rotate.fromValue = 0
+rotate.toValue = M_PI
+rotate.repeatCount = HUGE
+rotate.duration = 1.0
+rotate.autoreverses = true
+line.add(rotate, forKey: "transform.scale.x") 
+
+base.addSublayer(line)
+
 
 
 
