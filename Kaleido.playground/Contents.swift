@@ -114,7 +114,7 @@ main.addSubview(elm1)
 // Mark: - Player
 var player: AVAudioPlayer?
 
-guard let songURL = Bundle.main.url(forResource: "with_you", withExtension: "mp3") else {
+guard let songURL = Bundle.main.url(forResource: "fractal", withExtension: "mp3") else {
   fatalError("audio file is not in bundle.")
 }
 do {
@@ -126,22 +126,24 @@ do {
   player.isMeteringEnabled = true
   player.prepareToPlay()
   player.play()
-        Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true, block: { (_) in
-          player.updateMeters()
-          let logPeak = player.peakPower(forChannel: 0)
-          let logAverage = player.averagePower(forChannel: 0)
-          
-          let linearPeak = pow(10.0, logPeak/20.0)
-          let linearAverage = pow(10.0, logAverage/20.0)
-          
-          if linearPeak >= 0.55{
-            let array = [#colorLiteral(red: 0.9098039269, green: 0.4784313738, blue: 0.6431372762, alpha: 1), #colorLiteral(red: 0.4666666687, green: 0.7647058964, blue: 0.2666666806, alpha: 1), #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1), #colorLiteral(red: 0.1764705926, green: 0.01176470611, blue: 0.5607843399, alpha: 1), #colorLiteral(red: 0.7291084571, green: 0.9098039269, blue: 0, alpha: 1), #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)  ]
-            let randomIndex = Int(arc4random_uniform(UInt32(array.count)))
-            main.backgroundColor = array[randomIndex]
-
-          }
   
+  Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { (_) in
+    
+    player.updateMeters()
+    let logPeak = player.peakPower(forChannel: 0)
+    let logAverage = player.averagePower(forChannel: 0)
+          
+    let linearPeak = pow(10.0, logPeak/20.0)
+    let linearAverage = pow(10.0, logAverage/20.0)
+          
+          
+    if linearPeak >= 0.55 {
+      elm4.backgroundColor = UIColor(hue: CGFloat(Float(arc4random()) / Float(UINT32_MAX)), saturation: 0.7, brightness: 0.7, alpha: 1.0)
+      elm3.backgroundColor = UIColor(hue: CGFloat(Float(arc4random()) / Float(UINT32_MAX)), saturation: 0.7, brightness: 0.7, alpha: 1.0)
+      elm6.backgroundColor = UIColor(hue: CGFloat(Float(arc4random()) / Float(UINT32_MAX)), saturation: 0.7, brightness: 0.7, alpha: 1.0)
+          }
         })
+  
 } catch {
   fatalError("Could not play file")
 }
