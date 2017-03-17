@@ -1,6 +1,6 @@
 # Kaleido
 ## A kaleidoscopic music visualizer created on Swift Playgrounds. 
-_Created for my WWDC17 Scholarchip Application._
+_Created for my WWDC17 Scholarship Application._
 
 ![Kaleido Preview](https://media.giphy.com/media/Umhb0p6jIUqwU/giphy.gif)
 
