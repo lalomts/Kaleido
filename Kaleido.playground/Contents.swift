@@ -1,10 +1,16 @@
-//: Playground - noun: a place where people can play
-
 import UIKit
 import AVFoundation
 import PlaygroundSupport
-
-
+/*:
+ # Kaleido
+ ## The music-lovin' kaleidoscope.
+ 
+ Kaleido uses **CAReplicatorLayers**, masks, **CoreAnimation** and **AVFoundation** to create a kaleidoscope visualizer that reacts to the beat of your favorite tracks.
+ 
+ ----
+ 
+ ### Setup
+ */
 let view = UIView(frame: CGRect(x: 0, y: 0, width: 600, height: 400))
 view.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
 PlaygroundPage.current.liveView = view
@@ -13,7 +19,10 @@ let main = UIView()
 main.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
 main.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
 
+//: The **KaleidoLayer** is the base of the visualizer, it masks our *main* view and transforms it, creating the basic kaleidoscopic shape.
 let kaleido = KaleidoLayer(referenceLayer: main.layer)
+
+//: **CAReplicatorLayers** are used to duplicate the main KaleidoLayer and make the grid.
 
 let row = CAReplicatorLayer()
 row.frame = CGRect(x: 0, y: 0, width: 600, height: 200)
@@ -29,7 +38,14 @@ grid.addSublayer(row)
 
 view.layer.addSublayer(grid)
 
-//:1st Kaleido Element
+/*:
+----
+
+ ### Adding Elements
+  Different views are added to the *main Kaleido Layer* and animated using Core Animation to create the Kaleidoscope effect.
+*/
+
+// 1st Kaleido Element
 let elm1 = UIView(frame: CGRect(x: -20, y: -20 , width: 60, height: 15))
 elm1.backgroundColor = #colorLiteral(red: 0.6509803922, green: 0.8274509804, blue: 0.2509803922, alpha: 1)
 elm1.transform = CGAffineTransform(rotationAngle: CGFloat(160  * M_PI/180))
@@ -38,7 +54,7 @@ UIView.animate(withDuration: 12, delay: 6, options: [.repeat, .curveEaseOut], an
   elm1.frame.origin = CGPoint(x: 45, y: 120)
 }, completion: nil)
 
-//: 2nd Element
+// 2nd Element
 let elm2 = UIView(frame: CGRect(x: 50, y: 120, width: 70, height: 25))
 elm2.backgroundColor = #colorLiteral(red: 0.9137254902, green: 0.1254901961, blue: 0.2901960784, alpha: 1)
 
@@ -47,7 +63,7 @@ UIView.animate(withDuration: 8, delay: 3.2, options:  [.repeat, .curveEaseInOut]
   elm2.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI * 9 ))
 }, completion: nil)
 
-//: 3rd Element
+// 3rd Element
 let elm3 = UIView(frame: CGRect(x: 38, y: 38, width: 25, height: 25))
 elm3.backgroundColor = #colorLiteral(red: 0.9411764706, green: 0.8431372549, blue: 0.07058823529, alpha: 1)
 
@@ -68,7 +84,7 @@ gp2.fillMode = kCAFillModeForwards
 gp2.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
 elm3.layer.add(gp2, forKey: "grow and rotate")
 
-//4th element 
+// 4th element
 let elm4 = UIView(frame: CGRect(x: 10, y: 110, width: 80, height: 35))
 elm4.backgroundColor = #colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1)
 
@@ -77,7 +93,7 @@ UIView.animate(withDuration: 15, delay: 2, options:  [.repeat, .curveEaseOut], a
   elm4.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI))
 }, completion: nil)
 
-//5th element
+// 5th element
 let elm5 = UIView(frame: CGRect(x: -80, y: 20, width: 40, height: 65))
 elm5.backgroundColor = #colorLiteral(red: 0.1761738379, green: 0.1761738379, blue: 0.1761738379, alpha: 1)
 
@@ -94,7 +110,7 @@ an3.autoreverses = true
 an3.repeatCount = HUGE
 elm5.layer.add(an3, forKey: "rotation")
 
-//6th element
+// 6th element
 let elm6 = UIView(frame: CGRect(x: 70, y: 0, width: 70, height: 70))
   elm6.backgroundColor = #colorLiteral(red: 0.2234301561, green: 0.5110359363, blue: 0.9686274529, alpha: 1)
 
@@ -111,12 +127,31 @@ main.addSubview(elm2)
 main.addSubview(elm4)
 main.addSubview(elm1)
 
-// Mark: - Player
+/*: 
+ ----
+ 
+ ### Responding to Audio Player
+ We use **AVAudioPlayer** to play the song Kaleido will react to. 
+ Based on the *peakPower* and *averagePower* meters, we change some of the moving elements' background colors.
+ 
+ */
 var player: AVAudioPlayer?
+/*:
+ * experiment:
+ Change the **song** value to play different tracks. You can chose from:
+ 
+    1. "moose"
+    2. "fractal"
+    3. "rock"
+ 
+    Can you see how the colors react to the beat of your music?
+ */
+let song = "rock"
 
-guard let songURL = Bundle.main.url(forResource: "fractal", withExtension: "mp3") else {
+guard let songURL = Bundle.main.url(forResource: song, withExtension: "mp3") else {
   fatalError("audio file is not in bundle.")
 }
+
 do {
   
   player = try AVAudioPlayer(contentsOf: songURL)
@@ -129,20 +164,25 @@ do {
   
   Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { (_) in
     
+    if !player.isPlaying {
+      PlaygroundPage.current.finishExecution()
+    }
+    
     player.updateMeters()
     let logPeak = player.peakPower(forChannel: 0)
     let logAverage = player.averagePower(forChannel: 0)
-          
+    
+    //Converts the meters from dB to linear scale.
     let linearPeak = pow(10.0, logPeak/20.0)
     let linearAverage = pow(10.0, logAverage/20.0)
           
-          
+  
     if linearPeak >= 0.55 {
       elm4.backgroundColor = UIColor(hue: CGFloat(Float(arc4random()) / Float(UINT32_MAX)), saturation: 0.7, brightness: 0.7, alpha: 1.0)
       elm3.backgroundColor = UIColor(hue: CGFloat(Float(arc4random()) / Float(UINT32_MAX)), saturation: 0.7, brightness: 0.7, alpha: 1.0)
       elm6.backgroundColor = UIColor(hue: CGFloat(Float(arc4random()) / Float(UINT32_MAX)), saturation: 0.7, brightness: 0.7, alpha: 1.0)
-          }
-        })
+    }
+  })
   
 } catch {
   fatalError("Could not play file")
