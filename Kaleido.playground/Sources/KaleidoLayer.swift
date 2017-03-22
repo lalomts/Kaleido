@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-/// A layer that masks and transforms a layer to turn it into a square kaleidoscopic view.
+/// A layer that masks and applys several transforms to a layer, and turns it into a square kaleidoscopic view.
 public class KaleidoLayer: CAReplicatorLayer {
   
   public init(referenceLayer: CALayer) {

@@ -2,14 +2,14 @@ import UIKit
 import AVFoundation
 import PlaygroundSupport
 /*:
- # Kaleido
+ # Kaleido♦️🔵🔶
  ## The music-lovin' kaleidoscope.
  
- Kaleido uses **CAReplicatorLayers**, masks, **CoreAnimation** and **AVFoundation** to create a kaleidoscope visualizer that reacts to the beat of your favorite tracks.
+ Kaleido uses `CAReplicatorLayers`, masks, `CoreAnimation` and `AVFoundation` to create a kaleidoscope visualizer that reacts to the beat of your favorite tracks.
  
  ----
  
- ### Setup
+ ### Setup 🔧
  */
 let view = UIView(frame: CGRect(x: 0, y: 0, width: 600, height: 400))
 view.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
@@ -19,7 +19,8 @@ let main = UIView()
 main.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
 main.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
 
-//: The **KaleidoLayer** is the base of the visualizer, it masks our *main* view and transforms it, creating the basic kaleidoscopic shape.
+//: The `KaleidoLayer` is the base of the visualizer, it masks our *main* view and transforms it, creating the basic kaleidoscopic shape.\
+//: ![KaleidoLayer](kaleidoLayer.png "Kaleido Layer Explained")
 let kaleido = KaleidoLayer(referenceLayer: main.layer)
 
 //: **CAReplicatorLayers** are used to duplicate the main KaleidoLayer and make the grid.
@@ -41,7 +42,7 @@ view.layer.addSublayer(grid)
 /*:
 ----
 
- ### Adding Elements
+ ### Adding Elements 🚥
   Different views are added to the *main Kaleido Layer* and animated using Core Animation to create the Kaleidoscope effect.
 */
 
@@ -130,23 +131,23 @@ main.addSubview(elm1)
 /*: 
  ----
  
- ### Responding to Audio Player
- We use **AVAudioPlayer** to play the song Kaleido will react to. 
- Based on the *peakPower* and *averagePower* meters, we change some of the moving elements' background colors.
+ ### Responding to Audio Player 🔊
+ We use `AVAudioPlayer` to play the song Kaleido will react to.
+ Based on the `peakPower` and `averagePower` meters, we change some of the moving elements' background colors.
  
  */
 var player: AVAudioPlayer?
 /*:
  * experiment:
- Change the **song** value to play different tracks. You can chose from:
+ Change the `song` value to play different tracks. You can chose from:
  
     1. "moose"
     2. "fractal"
-    3. "rock"
+    3. Add your own tracks and add the file name.
  
     Can you see how the colors react to the beat of your music?
  */
-let song = "rock"
+let song = "moose"
 
 guard let songURL = Bundle.main.url(forResource: song, withExtension: "mp3") else {
   fatalError("audio file is not in bundle.")
@@ -162,6 +163,7 @@ do {
   player.prepareToPlay()
   player.play()
   
+//: The `Timer` helps us to run a function any given amount of time (in this case, every 0.5 seconds) as long as the `AudioPlayer` is playing the song.
   Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { (_) in
     
     if !player.isPlaying {
@@ -176,8 +178,10 @@ do {
     let linearPeak = pow(10.0, logPeak/20.0)
     let linearAverage = pow(10.0, logAverage/20.0)
           
-  
+//: If the peak power of the track at a given moment of time is above 55%, then we detect a beat (maybe a kickdrum or a snare sounding).🥁
     if linearPeak >= 0.55 {
+      
+//: The background **color hue** for these animated elements changes everytime an accent beat is detected.
       elm4.backgroundColor = UIColor(hue: CGFloat(Float(arc4random()) / Float(UINT32_MAX)), saturation: 0.7, brightness: 0.7, alpha: 1.0)
       elm3.backgroundColor = UIColor(hue: CGFloat(Float(arc4random()) / Float(UINT32_MAX)), saturation: 0.7, brightness: 0.7, alpha: 1.0)
       elm6.backgroundColor = UIColor(hue: CGFloat(Float(arc4random()) / Float(UINT32_MAX)), saturation: 0.7, brightness: 0.7, alpha: 1.0)
